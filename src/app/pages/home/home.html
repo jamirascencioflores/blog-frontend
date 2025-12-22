@@ -1,0 +1,128 @@
+<div class="container my-5">
+  <!-- FILTROS POR CATEGORÍA -->
+  <div class="d-flex flex-wrap gap-2 mb-5 justify-content-center">
+    <button
+      (click)="cargarPosts()"
+      class="btn btn-sm rounded-pill px-4"
+      [ngClass]="categoriaSeleccionada === null ? 'btn-primary' : 'btn-outline-primary'"
+    >
+      Todos
+    </button>
+    <button
+      *ngFor="let cat of categorias"
+      (click)="cargarPosts(cat.id)"
+      class="btn btn-sm rounded-pill px-4"
+      [ngClass]="categoriaSeleccionada === cat.id ? 'btn-primary' : 'btn-outline-primary'"
+    >
+      {{ cat.nombre }}
+    </button>
+  </div>
+
+  <!-- CREAR NUEVA CATEGORÍA (SOLO ADMIN) -->
+  <div class="d-flex align-items-center gap-2 mb-5 justify-content-center" *ngIf="isAdmin">
+    <input
+      type="text"
+      class="form-control w-auto rounded-pill"
+      placeholder="Nueva categoría"
+      #categoriaInput
+    />
+    <button
+      class="btn btn-success btn-sm rounded-pill px-4"
+      (click)="crearCategoria(categoriaInput.value); categoriaInput.value = ''"
+    >
+      + Crear categoría
+    </button>
+  </div>
+
+  <!-- LISTADO DE POSTS -->
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-4" *ngFor="let post of posts">
+      <div class="card border-0 shadow-sm hover-card h-100 p-3">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="badge bg-info text-dark text-uppercase">
+            {{ post.categoria?.nombre || 'Sin categoría' }}
+          </span>
+          <small class="text-muted">
+            {{ post.fechaCreacion | date : 'shortDate' }}
+          </small>
+        </div>
+
+        <h5 class="card-title fw-bold text-primary">{{ post.titulo }}</h5>
+        <p class="card-text text-secondary text-truncate">
+          {{ post.contenido }}
+        </p>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <small class="text-muted">
+            Por: <strong>{{ post.autor?.username }}</strong>
+          </small>
+          <button
+            class="btn btn-sm btn-outline-primary rounded-pill px-3"
+            [routerLink]="['/post', post.id]"
+          >
+            Leer más →
+          </button>
+        </div>
+
+        <!-- CAMBIAR CATEGORÍA DEL POST (SOLO ADMIN) -->
+        <div *ngIf="isAdmin" class="p-3 border-top bg-light rounded-bottom mt-3">
+          <label class="small text-muted d-block mb-2 fw-semibold">Cambiar categoría:</label>
+          <select
+            class="form-select form-select-sm"
+            (change)="asignarNuevaCategoria(post.id, $event)"
+          >
+            <option value="" disabled selected>Seleccione...</option>
+            <option *ngFor="let cat of categorias" [value]="cat.id">
+              {{ cat.nombre }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENSAJE SIN POSTS -->
+  <div *ngIf="posts.length === 0" class="text-center mt-5">
+    <p class="text-muted fst-italic fs-5">No hay publicaciones en esta categoría.</p>
+  </div>
+</div>
+
+<!-- CSS adicional -->
+<style>
+  .hover-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  .card-title.text-truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    display: box; /* estándar */
+    line-clamp: 2; /* estándar */
+    box-orient: vertical;
+
+    overflow: hidden;
+  }
+
+  .card-text.text-truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+
+    display: box; /* estándar */
+    line-clamp: 3; /* estándar */
+    box-orient: vertical;
+
+    overflow: hidden;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.7em;
+  }
+</style>

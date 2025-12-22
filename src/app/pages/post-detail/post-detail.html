@@ -1,0 +1,69 @@
+<div class="container mt-5" *ngIf="post">
+  <button class="btn btn-outline-secondary btn-sm mb-4" routerLink="/">← Volver</button>
+
+  <div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <h1 class="display-5 fw-bold">{{ post?.titulo }}</h1>
+      <button
+        *ngIf="username === post?.autor?.username || isAdmin"
+        class="btn btn-danger btn-sm"
+        (click)="eliminarPost()"
+      >
+        Eliminar Post
+      </button>
+      
+    </div>
+
+    <p class="text-muted">
+      Por: <strong>{{ post?.autor?.username || 'Usuario' }}</strong> |
+      {{ post?.fechaCreacion | date : 'medium' }}
+    </p>
+
+    <span class="badge bg-info text-dark" *ngIf="post?.categoria; else noCat">
+      {{ post.categoria.nombre }}
+    </span>
+    <ng-template #noCat><span class="badge bg-light text-dark">Sin categoría</span></ng-template>
+  </div>
+
+  <hr />
+
+  <div class="card border-0 shadow-sm mb-5 p-3">
+    <div class="card-body" style="white-space: pre-wrap">
+      {{ post?.contenido }}
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <h4>Comentarios ({{ post?.comentarios?.length || 0 }})</h4>
+
+    <div class="list-group mb-4">
+      <div *ngFor="let c of post?.comentarios" class="list-group-item border-0 shadow-sm mb-2">
+        <div class="d-flex justify-content-between">
+          <strong class="text-primary">{{ c.autor?.username || 'Anónimo' }}</strong>
+          <button class="btn btn-sm text-danger" (click)="borrarComentario(c.id)">&times;</button>
+        </div>
+        <p class="mb-0">{{ c.contenido }}</p>
+      </div>
+    </div>
+
+    <div class="bg-light p-3 rounded shadow-sm">
+      <textarea
+        class="form-control mb-2"
+        [(ngModel)]="nuevoComentario"
+        placeholder="Escribe un comentario..."
+      ></textarea>
+      <button
+        class="btn btn-primary"
+        (click)="enviarComentario()"
+        [disabled]="!nuevoComentario.trim()"
+      >
+        Comentar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!post" class="container mt-5 text-center">
+  <div class="spinner-border text-primary"></div>
+  <p>Cargando datos...</p>
+</div>

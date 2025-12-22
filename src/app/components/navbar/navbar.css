@@ -1,0 +1,10 @@
+.nav-link.btn-link {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.55); /* Color grisáceo de Bootstrap para nav-links */
+  border: none;
+  padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
+}
+
+.nav-link.btn-link:hover {
+  color: rgba(255, 255, 255, 0.75);
+}

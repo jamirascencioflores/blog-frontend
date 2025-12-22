@@ -1,0 +1,65 @@
+<div class="container mt-5">
+  <div class="card shadow-sm border-0 rounded-3">
+    <div class="card-header bg-primary text-white rounded-top-3">
+      <h3 class="mb-0">Crear Nueva Publicación</h3>
+    </div>
+
+    <div class="card-body">
+      <form (ngSubmit)="guardarPost()">
+        <!-- Título -->
+        <div class="mb-3">
+          <label for="titulo" class="form-label fw-semibold">Título</label>
+          <input
+            type="text"
+            class="form-control form-control-lg"
+            id="titulo"
+            [(ngModel)]="titulo"
+            name="titulo"
+            placeholder="Ej: Mi viaje a la playa"
+            required
+          />
+        </div>
+
+        <!-- Categoría -->
+        <div class="mb-3">
+          <label for="categoria" class="form-label fw-semibold">Categoría</label>
+          <select
+            class="form-select form-select-lg"
+            id="categoria"
+            [(ngModel)]="categoriaId"
+            name="categoriaId"
+            required
+          >
+            <option [ngValue]="null" disabled selected>Selecciona una categoría...</option>
+            <option *ngFor="let cat of categorias" [value]="cat.id">
+              {{ cat.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Contenido -->
+        <div class="mb-4">
+          <label for="contenido" class="form-label fw-semibold">Contenido</label>
+          <textarea
+            class="form-control"
+            id="contenido"
+            [(ngModel)]="contenido"
+            name="contenido"
+            rows="6"
+            placeholder="Escribe aquí tu historia..."
+            required
+          ></textarea>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancelar()">
+            Cancelar
+          </button>
+
+          <button type="submit" class="btn btn-primary">Publicar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
