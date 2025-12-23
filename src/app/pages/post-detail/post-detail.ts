@@ -70,10 +70,19 @@ export class PostDetail implements OnInit {
       this.postService.obtenerPostPorId(+id).subscribe({
         next: (data) => {
           this.post = data;
+
+          // --- AGREGA ESTO PARA DEPURAR ---
+          console.log('=== PRUEBA DE PERMISOS ===');
+          console.log('Usuario logueado (Token):', this.username);
+          console.log('Objeto Post recibido:', this.post);
+          console.log('Nombre del autor del post:', this.post.autor?.username);
+          console.log('¿Son iguales?:', this.post.autor?.username === this.username);
+          // --------------------------------
+
           this.cdr.detectChanges();
         },
         error: (err) => {
-          console.error(err);
+          console.error('Error al cargar post:', err);
           this.post = null;
           this.cdr.detectChanges();
         },
@@ -82,13 +91,33 @@ export class PostDetail implements OnInit {
   }
 
   enviarComentario() {
+    // 1. Validar que el comentario no esté vacío
     if (!this.nuevoComentario.trim()) return;
+
+    // 2. Verificar si el usuario está autenticado
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      // Si no hay token, lo mandamos al login
+      alert('Debes iniciar sesión para comentar.');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // 3. Si hay token, procedemos con la lógica normal
     this.postService.comentar(this.post.id, this.nuevoComentario).subscribe({
       next: () => {
         this.nuevoComentario = '';
         this.cargarDetallePost();
       },
-      error: (err: any) => alert('Error al comentar'),
+      error: (err: any) => {
+        if (err.status === 403 || err.status === 401) {
+          alert('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+          this.router.navigate(['/login']);
+        } else {
+          alert('Error al enviar el comentario.');
+        }
+      },
     });
   }
 
